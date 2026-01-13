@@ -24,6 +24,13 @@ description: |
   The process-control interface is only required if you want to be able
   to send signals to other applications in order to have them reload
   their configuration.
+
+  To run the application in the background, monitoring the GNOME dark mode
+  setting and automatically updating themes, you can enable the
+  built-in daemon:
+
+      sudo snap start --enable theme-sync.daemon
+
 license: Apache-2.0
 contact: https://github.com/jnsgruk/theme-sync/issues
 issues: https://github.com/jnsgruk/theme-sync/issues
