@@ -1,0 +1,14 @@
+[package]
+name = "theme-sync"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+confy = { version = "2.0.0", default-features = false, features = [
+    "yaml_conf",
+] }
+anyhow = "1.0"
+log = "0.4"
+env_logger = "0.11.8"
+serde = { version = "1.0.228", features = ["derive"] }
+clap = { version = "4.5.54", features = ["derive"] }
