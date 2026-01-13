@@ -17,18 +17,38 @@ This was a quick project to scratch my own itch!
 
 ## Installation
 
+The easiest way to use `theme-sync` is using the snap:
+
+```bash
+# Enable the user-daemons experimental feature in snapd
+snap set system experimental.user-daemons=true
+
+# Install the snap
+sudo snap install theme-sync
+
+# Enable the app to edit files in $HOME/.config
+sudo snap connect theme-sync:dot-config
+
+# (Optional) Enable the app to send signals to other apps to reload config
+sudo snap connect theme-sync:process-control
+```
+
+Once the snap is functional, you can also opt to start it in the background as a service:
+
+```bash
+sudo snap start --enable theme-sync.daemon
+```
+
 You can build and install `theme-sync` using `cargo`:
 
 ```bash
 cargo install --git https://github.com/jnsgruk/theme-sync
 ```
 
-Or Nix:
+Or run with Nix:
 
 ```bash
 nix run github:jnsgruk/theme-sync#theme-sync
-
-nix profile add github:jnsgruk/theme-sync#theme-sync
 ```
 
 ## Usage

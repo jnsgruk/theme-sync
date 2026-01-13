@@ -80,7 +80,10 @@ impl<'a> Configurator<'a> {
 
         info!("Applying {} theme to {}", variant, self.app.name);
 
-        let home = std::env::var("HOME").context("HOME environment variable not set")?;
+        let home = std::env::var("SNAP_REAL_HOME")
+            .or_else(|_| std::env::var("HOME"))
+            .context("SNAP_REAL_HOME or HOME environment variable not set")?;
+
         let path = Path::new(&home).join(&self.app.path);
 
         replace_in_file(&path, from, to)
@@ -113,9 +116,15 @@ fn load_config(override_path: Option<PathBuf>) -> Result<Config, Error> {
         info!("Loading configuration from {}", path.display());
         confy::load_path::<Config>(&path).context("loading configuration from override path")
     } else {
-        let default_path = confy::get_configuration_file_path("theme-sync", None)?;
-        info!("Loading configuration from {}", default_path.display());
-        confy::load::<Config>("theme-sync", None).context("loading configuration from default path")
+        // Confy's default path loading doesn't play well with snaps, so we emulate it here
+        // to account for both in-snap and out of snap invocations.
+        let home = std::env::var("SNAP_REAL_HOME")
+            .or_else(|_| std::env::var("HOME"))
+            .context("SNAP_REAL_HOME or HOME environment variable not set")?;
+        let path = Path::new(&home).join(".config/theme-sync/default-config.yml");
+
+        info!("Loading configuration from {}", path.display());
+        confy::load_path::<Config>(&path).context("loading configuration from default path")
     }
 }
 

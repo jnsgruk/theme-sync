@@ -1,0 +1,78 @@
+name: theme-sync
+adopt-info: theme-sync
+summary: Synchronize application themes with GNOME appearance settings
+description: |
+  Synchronize theme preferences across multiple terminal tools based
+  on your GNOME appearance settings.
+
+  While many tools now support automatic theme switching based on 
+  system settings, many do not. This utility aims to bridge that
+  gap by monitoring GNOME's theme state, then substituting theme names
+  in configuration files.
+
+  This snap relies upon an experimental feature that allows snapd to run
+  'user daemons', which must be enabled on your system before you will
+  be able to install the snap:
+
+      sudo snap set system experimental.user-daemons=true
+
+  Before this can be used, you must connect some snap interfaces:
+
+      sudo snap connect theme-sync:dot-config
+      sudo snap connect theme-sync:process-control
+
+  The process-control interface is only required if you want to be able
+  to send signals to other applications in order to have them reload
+  their configuration.
+license: Apache-2.0
+contact: https://github.com/jnsgruk/theme-sync/issues
+issues: https://github.com/jnsgruk/theme-sync/issues
+source-code: https://github.com/jnsgruk/theme-sync
+
+base: core24
+confinement: strict
+grade: stable
+compression: lzo
+
+platforms:
+  amd64:
+  arm64:
+
+parts:
+  theme-sync:
+    plugin: rust
+    source: .
+    stage-packages:
+      - libglib2.0-bin
+    override-prime: |
+      craftctl default
+      bin_version="$($CRAFT_PRIME/bin/theme-sync --version | cut -d" " -f2)"
+      craftctl set version="$bin_version"
+
+apps:
+  theme-sync:
+    command: bin/theme-sync
+    extensions:
+      - gnome
+    plugs:
+      - home
+      - dot-config
+      - process-control
+  daemon:
+    command: bin/theme-sync monitor
+    daemon: simple
+    daemon-scope: user
+    restart-condition: always
+    restart-delay: 3s
+    extensions:
+      - gnome
+    plugs:
+      - home
+      - dot-config
+      - process-control
+
+plugs:
+  dot-config:
+    interface: personal-files
+    write:
+      - $HOME/.config
