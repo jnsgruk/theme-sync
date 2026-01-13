@@ -88,12 +88,12 @@ apps:
     path: .config/helix/config.toml
     light_token: catppuccin_latte
     dark_token: catppuccin_macchiato
-    reload: pkill -USR1 hx
+    reload_cmd: pkill -USR1 hx
 
   - name: bottom
     path: .config/bottom/bottom.toml
-    light_token: "default-light"
-    dark_token: "default"
+    light_token: '"default-light"'
+    dark_token: '"default"'
 ```
 
 Each `app` entry defines:
@@ -101,7 +101,7 @@ Each `app` entry defines:
 - `name`: friendly label for logging
 - `path`: file path (relative to `$HOME`) to update
 - `light_token` / `dark_token`: strings swapped for light/dark modes
-- `reload`: optional command run via `bash -c` after updating the file
+- `reload_cmd`: optional command run via `bash -c` after updating the file
 
 ## Logging
 
