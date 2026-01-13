@@ -1,5 +1,7 @@
 # theme-sync
 
+<a href="https://snapcraft.io/theme-sync"><img alt="theme-sync" src="https://snapcraft.io/theme-sync/badge.svg"/></a>
+
 Synchronize theme preferences across multiple terminal tools based on your GNOME appearance settings.
 
 While many tools now support automatic theme switching based on system settings, many do not. This
