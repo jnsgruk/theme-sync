@@ -29,7 +29,7 @@ description: |
   setting and automatically updating themes, you can enable the
   built-in daemon:
 
-      sudo snap start --enable theme-sync.daemon
+      sudo snap start --users=all --enable theme-sync.daemon
 
 license: Apache-2.0
 contact: https://github.com/jnsgruk/theme-sync/issues
