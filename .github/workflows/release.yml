@@ -9,6 +9,56 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v6
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v21
+
+      - name: Setup Nix cache
+        uses: nix-community/cache-nix-action@main
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+
+      - name: Build x86_64 release tarball
+        run: |
+          mkdir dist
+          cp README.md LICENSE dist/
+          nix build -L .#theme-sync
+          cp result/bin/theme-sync dist/
+          tar -C dist -cvf theme-sync_Linux_x86_64.tar.gz README.md LICENSE theme-sync
+          rm -rf dist/
+
+      - name: Build aarch64 release tarball
+        run: |
+          mkdir dist
+          cp README.md LICENSE dist/
+          nix build -L .#theme-sync-cross-aarch64
+          cp result/bin/theme-sync dist/
+          tar -C dist -cvf theme-sync_Linux_aarch64.tar.gz README.md LICENSE theme-sync
+          rm -rf dist/
+
+      - name: Generate checksums
+        run: |
+          sha256sum theme-sync_Linux_*.tar.gz > checksums.txt
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create \
+            "${{ github.ref_name }}" \
+            --title "${{ github.ref_name }}" \
+            --generate-notes \
+            theme-sync_Linux_x86_64.tar.gz \
+            theme-sync_Linux_aarch64.tar.gz \
+            checksums.txt
+
   snap:
     name: Release snap
     strategy:

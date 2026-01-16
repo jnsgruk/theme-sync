@@ -3,3 +3,6 @@ config.yaml
 dist/
 result*
 *.snap
+dist/
+*.tar.gz
+checksums.txt
