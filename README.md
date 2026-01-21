@@ -38,7 +38,7 @@ sudo snap connect theme-sync:process-control
 Once the snap is functional, you can also opt to start it in the background as a service:
 
 ```bash
-sudo snap start --users=all --enable theme-sync.daemon
+snap start --enable --user theme-sync.daemon
 ```
 
 You can build and install `theme-sync` using `cargo`:
