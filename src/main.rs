@@ -48,7 +48,7 @@ enum CommandKind {
 }
 
 /// Normalized theme preference tokens reported by GNOME.
-#[derive(Copy, Clone, Debug, ValueEnum)]
+#[derive(Copy, Clone, Debug, PartialEq, ValueEnum)]
 enum ThemePreference {
     Dark,
     Light,
@@ -141,9 +141,15 @@ fn monitor_theme_changes(config: &Config) -> Result<()> {
         .context("failed to capture gsettings output")?;
 
     let reader = BufReader::new(stdout);
+    let mut last_theme: Option<ThemePreference> = None;
     for line in reader.lines() {
         let line = line?;
         let theme = infer_theme(&line);
+        if last_theme.is_some_and(|prev| prev == theme) {
+            debug!("Theme unchanged ({:?}), skipping", theme);
+            continue;
+        }
+        last_theme = Some(theme);
         apply_all(theme, config)?;
     }
 
